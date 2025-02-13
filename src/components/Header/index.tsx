@@ -76,8 +76,8 @@ export default function Header() {
               <br />
               At least one uppercase letter
             </p>
-            <button type="submit" className="btn btn-info btn-">
-              Info
+            <button type="submit" className="btn btn-info text-stone-50 btn-">
+              OK
             </button>
           </form>
         </div>

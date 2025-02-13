@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Homepage from './pages/Homepage';
 import type { IRecipe } from './@types/components/recipe';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import Details from './pages/Details';
 
 function App() {
   const [recipes, setRecipes] = useState<IRecipe>();
@@ -39,11 +40,12 @@ function App() {
         </div>
         <div className="w-3/4">
           <Header />
-          <Homepage />
+          {/* <Homepage /> */}
+          <Routes>
+            <Route path="/" element={<Homepage recipes={recipes} />} />
+            <Route path="/recipes/:slug" element={<Details />} />
+          </Routes>
         </div>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-        </Routes>
       </BrowserRouter>
     </div>
   );
