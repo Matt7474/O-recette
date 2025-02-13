@@ -40,8 +40,12 @@ export default function Details() {
   
   return (
     <div className='pl-4'>
-      <div>
-        <img className='w-200 rounded-b-3xl ' src={recipe.thumbnail} alt={recipe.title} />
+      <div className='relative '>
+        <div className='flex items-center bg-gray-300/30 backdrop-opacity-10 absolute flex-col'>
+          <h1 className='text-4xl text-white w-full'>{recipe.title}</h1>
+          <span className=''>{recipe.author} - {recipe.difficulty}</span>
+        </div>
+        <img className='w-200 rounded-b-3xl ' src={recipe.thumbnail} alt={recipe.title}></img>
       </div>
       <div className='pt-4'>
         <ul>
