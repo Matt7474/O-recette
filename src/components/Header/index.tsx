@@ -1,9 +1,32 @@
+import { useState } from 'react';
 import logo from '../../assets/logo.png';
+import { useUserStore } from '../../store/store';
+import { fetchData } from '../../api/api';
 
 export default function Header() {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('handleSubmit');
+  const [loginError, setLoginError] = useState<null | string>(null);
+  const { user, login, logout } = useUserStore();
+
+  const checkCredencials = async (email: string, password: string) => {
+    try {
+      const response = await fetchData<{
+        pseudo: string;
+        token: string;
+        isLogged: boolean;
+      }>('https://orecipesapi.onrender.com/api/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      setLoginError(null);
+    } catch {
+      setLoginError('Erreur lors de la connexion');
+    }
   };
 
   return (
@@ -13,7 +36,14 @@ export default function Header() {
           <img src={logo} alt="logo" className="w-20" />
         </div>
         <div className="flex align-center">
-          <form onSubmit={handleSubmit} className="flex gap-2">
+          <form
+            action={(formData) => {
+              const email = formData.get('email') as string;
+              const password = formData.get('password') as string;
+              checkCredencials(email, password);
+            }}
+            className="flex gap-2"
+          >
             <label className="input validator">
               <svg
                 className="h-[1em] opacity-50"
@@ -62,9 +92,9 @@ export default function Header() {
                 type="password"
                 required
                 placeholder="Password"
-                minLength={8}
-                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+                minLength={1}
+                // pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                // title="Must be more than  characters, including number, lowercase letter, uppercase letter"
               />
             </label>
             <p className="validator-hint hidden">

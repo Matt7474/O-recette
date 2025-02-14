@@ -6,10 +6,6 @@ interface NavbarProps {
 }
 
 export default function Homepage({ recipes = [] }: NavbarProps) {
-  console.log(recipes);
-  console.log('Recettes dans Homepage :', Array.isArray(recipes), recipes);
-  console.log('Recettes dans Homepage :', recipes.length, recipes);
-
   return (
     <div className="flex flex-col pl-8">
       <div className="">

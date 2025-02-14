@@ -6,7 +6,7 @@ interface NavbarProps {
 }
 
 export default function Navbar({ recipes = [] }: NavbarProps) {
-  console.log(recipes);
+  // console.log(recipes);
 
   return (
     <>
