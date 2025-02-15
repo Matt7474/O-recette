@@ -4,7 +4,7 @@ import { useUserStore } from '../../store/store';
 import { fetchData } from '../../api/api';
 
 export default function Header() {
-  const [loginError, setLoginError] = useState<null | string>(null);
+  const [, setLoginError] = useState<null | string>(null);
   const { user, login, logout } = useUserStore();
 
   const checkCredencials = async (email: string, password: string) => {
@@ -24,10 +24,12 @@ export default function Header() {
         },
       });
       setLoginError(null);
+      login(response.pseudo, response.token);
     } catch {
       setLoginError('Erreur lors de la connexion');
     }
   };
+  console.log(user, login, logout);
 
   return (
     <>

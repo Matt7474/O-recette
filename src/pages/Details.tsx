@@ -22,7 +22,9 @@ export default function Details() {
       } catch (error) {
         setLoading(false);
         setError('Failed to load recipes from API');
-        console.error(error.message);
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
       } finally {
         setLoading(false);
       }
