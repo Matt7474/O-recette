@@ -64,6 +64,16 @@ jobs:
         with:
           path: dist
 
+      # Installationd de surge pour deploiment sur surge.sh
+      - name: Install Surge
+        run: npm install --global surge
+
+      - name: Deploy to Surge
+        run: |
+          surge --project ./dist --domain <your-custom-domain>.surge.sh
+        env:
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+
   deploy:
     # on fait pas le deploy tant qu'on a pas fait le build
     needs: build
@@ -78,10 +88,13 @@ jobs:
         # avec id on donne le nom 'deployment' à notre step, il sera utilisé pour récupérer notre url dans les outputs
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          branch: gh-pages
+          folder: dist
 
         # Affichage de l'URL du site
       - name: 🔗 URL du site déployé
         # l'url de la page github sera disponible dans les outputs de la step ayant l'id deployment
         # elle sera normalement de type : https://<username>.github.io/<repo>/
-        # attention faudra ajouter la base URL dans la config de Vite sinon le nom du repo ne sera prit en compte
+        # attention faudra ajouter la base URL dans la config de Vite sinon le nom du repo ne sera prit en compte.
         run: echo "🔗 Votre site est disponible à ${{ steps.deployment.outputs.page_url }}"
