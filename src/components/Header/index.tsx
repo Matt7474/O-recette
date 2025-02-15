@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import logo from '../../assets/logo.png';
-import { useUserStore } from '../../store/store';
+// import { useUserStore } from '../../store/store';
 import { fetchData } from '../../api/api';
 
 export default function Header() {
-  const [loginError, setLoginError] = useState<null | string>(null);
-  const { user, login, logout } = useUserStore();
+  const [, setLoginError] = useState<null | string>(null);
+  // const { user, login, logout } = useUserStore();
 
   const checkCredencials = async (email: string, password: string) => {
     try {
@@ -23,9 +23,18 @@ export default function Header() {
           'Content-Type': 'application/json',
         },
       });
-      setLoginError(null);
-    } catch {
+
+      // biome-ignore lint/complexity/useOptionalChain: <explanation>
+      if (response && response.token) {
+        setLoginError(null);
+        // Effectue une action avec les données (par exemple, stocker le token)
+        console.log(response.token);
+      } else {
+        setLoginError('Identifiants invalides');
+      }
+    } catch (error) {
       setLoginError('Erreur lors de la connexion');
+      console.error(error);
     }
   };
 
