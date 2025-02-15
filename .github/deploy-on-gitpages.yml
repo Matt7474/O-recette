@@ -78,9 +78,9 @@ jobs:
         # avec id on donne le nom 'deployment' à notre step, il sera utilisé pour récupérer notre url dans les outputs
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          branch: gh-pages
-          folder: dist
+        # with:
+        #   branch: gh-pages
+        #   folder: dist
 
         # Affichage de l'URL du site
       - name: 🔗 URL du site déployé
