@@ -54,7 +54,7 @@ jobs:
       # Check lint et format
       # Tests
 
-      # on build notre code
+      # on build notre code.
       - name: 🏗️ Build du projet
         run: npm run build
 
