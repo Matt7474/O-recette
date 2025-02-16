@@ -65,6 +65,10 @@ jobs:
       - name: 🏗️ Build du projet
         run: pnpm run build
 
+      # ➡️ ICI on ajoute la création du fichier `.nojekyll`
+      - name: 🚫 Désactiver Jekyll
+        run: touch dist/.nojekyll
+
       # Création d'un artifact contenant notre bundle (pour l'utiliser dans le job deploy)
       - name: 📤 Création du GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
