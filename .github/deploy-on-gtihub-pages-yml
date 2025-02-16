@@ -1,13 +1,5 @@
-name: Deploy on githubpages
-
-# Contrôle l'exécution du workflow
-on:
-  # Déclenchement lors d'un push mais uniquement sur la branche `S19E02-gh-pages`
-  push:
-    branches: [ "gh-pages" ]
-  
-  # Autorisation de déclencher manuellement du workflow depuis l'onglet « Actions » du dépôt GH
-  workflow_dispatch:
+# le nom de notre workflow
+name: Deploy on githubPages
 
 # On défini des permissions pour autoriser le déploiement sur GitHub Pages
 # copié collé de la doc, obligatoire pour que ça marche
@@ -22,91 +14,87 @@ permissions:
   # (peut être nécessaire pour interagir avec d'autres services ou APIs externes pour prouver l'identité du workflow ; ex. : Google Cloud, authentification OAuth…)
   id-token: write
 
-# on authorise un seul groupe de jobs à la fois
-concurrency:
-  # Le nom du groupe de jobs
-  group: "pages"
-  # on ne veut pas que les jobs soient annulés si un autre est en cours
-  cancel-in-progress: false
+# le trigger : quand est ce que le workflow s'execute (ici au push sur master)
+on: 
+  push:
+    branches: 
+      - dev
 
-jobs: 
+# liste des jobs à faire
+jobs:
 
   build:
-    runs-on: ubuntu-latest
-    # # on pense à préciser le working-directory pour que les actions se fassent dans dossier frontend
-    # defaults:
-    #   run:
-    #     working-directory: ../
-        # frontend
+    # Utilise une machine virtuelle Ubuntu pour exécuter les actions
+    # y'aura rien d'installé dessus
+    runs-on: ubuntu-latest 
 
-    steps: 
-      # on récupère le code
-      - name: 📥 Checkout du code
+    # Liste des actions
+    steps:
+
+      # Étape 1: Recuperer le code (sans les node_modules)
+      - name: Checkout code du depot
         uses: actions/checkout@v4
 
-      # installation de pnpm
-      - name: 🚀 Installer PNPM
-        run: npm install -g pnpm
+      # on utilise l'action de pnpm pour installer pnpm sur notre runner
+      - name: ⚙️ Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
 
-      # on installe Node.js
-      - name: ⚙️ Setup de l'environnement Node.js
+      # Installer Node
+      - name: ⚙️ Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22 
+          node-version: 22
           cache: 'pnpm'
 
-      # on installe les dépendances
-      - name: 📦 Installation des dépendances
+      # Install des dependances listées dans le package.json avec pnpm 
+      - name: 📦 Install dependencies
         run: pnpm install
 
-      # Check lint et format
-      # Tests
+      # TEST et LINTER si besoin
+      - name: Lancement des tests
+        run: pnpm test
 
-      # on build notre code.
-      - name: 🏗️ Build du projet
-        run: pnpm run build
+      # CHECK lint et format
+      # install de la CLI de biome sur le runner
+      - name: ⚙️ Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
 
-      # # ➡️ ICI on ajoute la création du fichier `.nojekyll`
-      # - name: 🚫 Désactiver Jekyll
-      #   run: touch dist/.nojekyll
+      # Lance le script ci qui correspond à un check (format + lint + imports order)
+      - name: 🎨 Run Biome
+        run: biome ci .
+
+      # Build pour avoir notre dossier dist (bundle)
+      - name: 🏗️ Build
+        run: pnpm build
 
       # Création d'un artifact contenant notre bundle (pour l'utiliser dans le job deploy)
       - name: 📤 Création du GitHub Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
-
-      # Installationd de surge pour deploiment sur surge.sh
-      - name: Install Surge
-        run: npm install --global surge
-
-      - name: Deploy to Surge
-        run: |
-          surge --project ./dist --domain <your-custom-domain>.surge.sh
-        env:
-          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+          path: ./dist
+      
 
   deploy:
-    # on fait pas le deploy tant qu'on a pas fait le build
+    # on precise que ce job ne doit commencer si build n'est pas fini
     needs: build
-    runs-on: ubuntu-latest
 
-    # on créé un environnement appelé "github-pages", on pourra ainsi directement sur github, dans les settings, lui configurer des secrets, des regles de protection, etc.
-    environment:
-      name: github-pages
+    # on choit notre environnement d'execution des actions
+    runs-on: ubuntu-latest 
 
     steps:
       - name: 🚀 Déploiement sur GitHub Pages
         # avec id on donne le nom 'deployment' à notre step, il sera utilisé pour récupérer notre url dans les outputs
         id: deployment
         uses: actions/deploy-pages@v4
-        with:
-          branch: gh-pages
-          folder: dist
 
-        # Affichage de l'URL du site
+      # Affichage de l'URL du site
       - name: 🔗 URL du site déployé
         # l'url de la page github sera disponible dans les outputs de la step ayant l'id deployment
         # elle sera normalement de type : https://<username>.github.io/<repo>/
-        # attention faudra ajouter la base URL dans la config de Vite sinon le nom du repo ne sera prit en compte.
+        # attention faudra ajouter la base URL dans la config de Vite sinon le nom du repo ne sera prit en compte
         run: echo "🔗 Votre site est disponible à ${{ steps.deployment.outputs.page_url }}"
