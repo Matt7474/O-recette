@@ -38,7 +38,7 @@ jobs:
     #   run:
     #     working-directory: ../
         # frontend
-        
+
     steps: 
       # on récupère le code
       - name: 📥 Checkout du code
@@ -66,9 +66,9 @@ jobs:
       - name: 🏗️ Build du projet
         run: pnpm run build
 
-      # ➡️ ICI on ajoute la création du fichier `.nojekyll`
-      - name: 🚫 Désactiver Jekyll
-        run: touch dist/.nojekyll
+      # # ➡️ ICI on ajoute la création du fichier `.nojekyll`
+      # - name: 🚫 Désactiver Jekyll
+      #   run: touch dist/.nojekyll
 
       # Création d'un artifact contenant notre bundle (pour l'utiliser dans le job deploy)
       - name: 📤 Création du GitHub Pages artifact
