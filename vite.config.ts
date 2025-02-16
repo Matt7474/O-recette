@@ -8,4 +8,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: '/O-recette/',
+  build: {
+    outDir: 'dist', // Assurez-vous que le build génère dans le dossier dist
+  },
 });
