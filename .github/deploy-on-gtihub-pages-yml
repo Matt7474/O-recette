@@ -49,14 +49,14 @@ jobs:
 
       # on installe les dépendances
       - name: 📦 Installation des dépendances
-        run: npm install
+        run: pnpm install
 
       # Check lint et format
       # Tests
 
       # on build notre code.
       - name: 🏗️ Build du projet
-        run: npm run build
+        run: pnpm run build
 
       # Création d'un artifact contenant notre bundle (pour l'utiliser dans le job deploy)
       - name: 📤 Création du GitHub Pages artifact
