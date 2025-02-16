@@ -43,9 +43,16 @@ jobs:
       - name: 📥 Checkout du code
         uses: actions/checkout@v4
 
+      # installation de pnpm
+      - name: 🚀 Installer PNPM
+        run: npm install -g pnpm
+
       # on installe Node.js
       - name: ⚙️ Setup de l'environnement Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: 22 
+          cache: 'pnpm'
 
       # on installe les dépendances
       - name: 📦 Installation des dépendances
