@@ -46,7 +46,7 @@ jobs:
       - name: ⚙️ Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 20
           cache: 'pnpm'
 
       # Install des dependances listées dans le package.json avec pnpm 
@@ -77,6 +77,13 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
+
+      - name: 👀 verif du build
+        run: ls
+
+      # on installe surge en global sur le runner
+      - name: ⚙️ Setup Surge
+        run: npm install -g surge
       
 
   deploy:
