@@ -1,34 +1,21 @@
-name: Deploy on githubpages
+name: Deploy on githubPages
 
-# Contrôle l'exécution du workflow
-on:
-  # Déclenchement lors d'un push mais uniquement sur la branche `S19E02-gh-pages`
+on: 
   push:
-    branches: [ "dev" ]
-  
-  # Autorisation de déclencher manuellement du workflow depuis l'onglet « Actions » du dépôt GH
-  workflow_dispatch:
+    branches: 
+      - dev
 
-# On défini des permissions pour autoriser le déploiement sur GitHub Pages
-# copié collé de la doc, obligatoire pour que ça marche
 permissions:
-  # Permission de lire le contenu du dépôt
-  # (nécessaire pour le processus de checkout du code, comme dans l'étape actions/checkout@v4)
+
   contents: read
-  # Permission d'écrire sur GH Pages
-  # (essentiel pour que le processus de déploiement fonctionne correctement)
   pages: write
-  # Permet de créer un token
-  # (peut être nécessaire pour interagir avec d'autres services ou APIs externes pour prouver l'identité du workflow ; ex. : Google Cloud, authentification OAuth…)
   id-token: write
 
-
-jobs: 
+jobs:
   build:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-    # Pas besoin de working-directory ici car on est à la racine du projet.
     steps:
       - name: 📥 Checkout du code
         uses: actions/checkout@v4
@@ -53,17 +40,16 @@ jobs:
         with:
           path: ./dist
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages  
 
-    deploy:
-      needs: build
-      runs-on: ubuntu-latest
-      environment:
-        name: github-pages  
+    steps:
+      - name: 🚀 Déploiement sur GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
-      steps:
-        - name: 🚀 Déploiement sur GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v4
-
-        - name: 🔗 URL du site déployé
-          run: echo "🔗 Votre site est disponible à ${{ steps.deployment.outputs.page_url }}"
+      - name: 🔗 URL du site déployé
+        run: echo "🔗 Votre site est disponible à ${{ steps.deployment.outputs.page_url }}"
