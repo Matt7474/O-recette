@@ -3,7 +3,7 @@ name: Deploy on githubPages
 on: 
   push:
     branches: 
-      - dev
+      - deploy
 
 permissions:
 
