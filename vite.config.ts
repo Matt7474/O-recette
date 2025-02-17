@@ -5,5 +5,5 @@ import tailwindcss from '@tailwindcss/vite';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: '/O-recette/', // Assure-toi que le chemin de base est correct
+  base: '/O-recette/',
 });
