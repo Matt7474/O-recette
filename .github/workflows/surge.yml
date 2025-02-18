@@ -1,0 +1,48 @@
+name: Deploy on surge
+
+on: 
+  push:
+    branches: 
+      - deploy
+
+jobs: 
+
+  build-and-deploy: 
+    runs-on: ubuntu-latest
+ 
+    steps: 
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: ⚙️ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: ⚙️ Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+
+      - name: 🎨 Run Biome
+        run: biome ci .
+
+      - name: 🏗️ Build
+        run: pnpm build
+
+      - name: ⚙️ Setup Surge
+        run: npm install -g surge
+
+      - name: 🚀 Deploy on surge
+        run: surge ./dist orecette-matt7474.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+      
